@@ -1,0 +1,12 @@
+42200 ms: LEFT Indicator ON
+48700 ms: LEFT Indicator OFF
+55100 ms: RIGHT Indicator ON
+58800 ms: RIGHT Indicator OFF
+69100 ms: RIGHT Indicator ON
+73200 ms: RIGHT Indicator OFF
+80800 ms: LEFT Indicator ON
+85500 ms: RIGHT Indicator ON
+91900 ms: LEFT Indicator ON
+103000 ms: LEFT Indicator OFF
+109200 ms: Hazard Light Activated
+115900 ms: Hazard Light Deactivated via RIGHT
