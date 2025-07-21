@@ -1,0 +1,296 @@
+
+/*
+ * Academic License - for use in teaching, academic research, and meeting
+ * course requirements at degree granting institutions only.  Not for
+ * government, commercial, or other organizational use.
+ *
+ * File: indicator_controller.c
+ *
+ * Code generated for Simulink model 'indicator_controller'.
+ *
+ * Model version                  : 1.8
+ * Simulink Coder version         : 25.1 (R2025a) 21-Nov-2024
+ * C/C++ source code generated on : Mon Jul 21 15:48:43 2025
+ *
+ * Target selection: ert.tlc
+ * Embedded hardware selection: Atmel->AVR
+ * Code generation objective: Execution efficiency
+ * Validation result: Not run
+ */
+
+#include "indicator_controller.h"
+#include "indicator_controller_private.h"
+#include "rtwtypes.h"
+#include <math.h>
+
+/* Block states (default storage) */
+DW_indicator_controller_T indicator_controller_DW;
+
+/* Real-time model */
+static RT_MODEL_indicator_controller_T indicator_controller_M_;
+RT_MODEL_indicator_controller_T *const indicator_controller_M =
+  &indicator_controller_M_;
+real_T rt_roundd_snf(real_T u)
+{
+  real_T y;
+  if (fabs(u) < 4.503599627370496E+15) {
+    if (u >= 0.5) {
+      y = floor(u + 0.5);
+    } else if (u > -0.5) {
+      y = u * 0.0;
+    } else {
+      y = ceil(u - 0.5);
+    }
+  } else {
+    y = u;
+  }
+
+  return y;
+}
+
+/* Model step function */
+void indicator_controller_step(void)
+{
+  real_T tmp;
+  uint8_T tmp_0;
+  boolean_T rtb_Compare;
+  boolean_T rtb_Compare_i;
+  boolean_T rtb_FixPtRelationalOperator_l;
+
+  /* Switch: '<Root>/Switch' incorporates:
+   *  Constant: '<Root>/Constant'
+   *  Constant: '<S1>/Constant'
+   *  DiscreteIntegrator: '<Root>/Discrete-Time Integrator'
+   *  RelationalOperator: '<S1>/Compare'
+   *  UnitDelay: '<Root>/Unit Delay'
+   */
+  if (indicator_controller_DW.UnitDelay_DSTATE >=
+      indicator_controller_P.Switch_Threshold) {
+    indicator_controller_DW.UnitDelay_DSTATE =
+      indicator_controller_P.Constant_Value;
+  } else {
+    indicator_controller_DW.UnitDelay_DSTATE =
+      (indicator_controller_DW.DiscreteTimeIntegrator_DSTATE >=
+       indicator_controller_P.CompareToConstant_const);
+  }
+
+  /* End of Switch: '<Root>/Switch' */
+
+  /* MATLABSystem: '<Root>/Left LED' incorporates:
+   *  UnitDelay: '<Root>/Unit Delay'
+   */
+  tmp = rt_roundd_snf(indicator_controller_DW.UnitDelay_DSTATE);
+  if (tmp < 256.0) {
+    if (tmp >= 0.0) {
+      tmp_0 = (uint8_T)tmp;
+    } else {
+      tmp_0 = 0U;
+    }
+  } else {
+    tmp_0 = MAX_uint8_T;
+  }
+
+  writeDigitalPin(9, tmp_0);
+
+  /* End of MATLABSystem: '<Root>/Left LED' */
+
+  /* MATLABSystem: '<Root>/Left_Button' */
+  rtb_Compare_i = readDigitalPin(8);
+
+  /* RelationalOperator: '<S5>/Compare' incorporates:
+   *  Constant: '<S5>/Constant'
+   *  MATLABSystem: '<Root>/Left_Button'
+   * */
+  rtb_Compare = ((int16_T)rtb_Compare_i > (int16_T)
+                 indicator_controller_P.Constant_Value_f);
+
+  /* MATLABSystem: '<Root>/Right_Button' */
+  rtb_Compare_i = readDigitalPin(7);
+
+  /* RelationalOperator: '<S6>/Compare' incorporates:
+   *  Constant: '<S6>/Constant'
+   *  MATLABSystem: '<Root>/Right_Button'
+   * */
+  rtb_Compare_i = ((int16_T)rtb_Compare_i > (int16_T)
+                   indicator_controller_P.Constant_Value_l);
+
+  /* RelationalOperator: '<S4>/FixPt Relational Operator' incorporates:
+   *  UnitDelay: '<S4>/Delay Input1'
+   *
+   * Block description for '<S4>/Delay Input1':
+   *
+   *  Store in Global RAM
+   */
+  rtb_FixPtRelationalOperator_l = ((int16_T)rtb_Compare_i > (int16_T)
+    indicator_controller_DW.DelayInput1_DSTATE_b);
+
+  /* Switch: '<Root>/Switch1' incorporates:
+   *  Constant: '<Root>/Constant1'
+   *  Constant: '<S2>/Constant'
+   *  DiscreteIntegrator: '<Root>/Discrete-Time Integrator1'
+   *  RelationalOperator: '<S2>/Compare'
+   *  UnitDelay: '<Root>/Unit Delay1'
+   */
+  if (indicator_controller_DW.UnitDelay1_DSTATE >=
+      indicator_controller_P.Switch1_Threshold) {
+    indicator_controller_DW.UnitDelay1_DSTATE =
+      indicator_controller_P.Constant1_Value;
+  } else {
+    indicator_controller_DW.UnitDelay1_DSTATE =
+      (indicator_controller_DW.DiscreteTimeIntegrator1_DSTATE >=
+       indicator_controller_P.CompareToConstant1_const);
+  }
+
+  /* End of Switch: '<Root>/Switch1' */
+
+  /* MATLABSystem: '<Root>/Right LED' incorporates:
+   *  UnitDelay: '<Root>/Unit Delay1'
+   */
+  tmp = rt_roundd_snf(indicator_controller_DW.UnitDelay1_DSTATE);
+  if (tmp < 256.0) {
+    if (tmp >= 0.0) {
+      tmp_0 = (uint8_T)tmp;
+    } else {
+      tmp_0 = 0U;
+    }
+  } else {
+    tmp_0 = MAX_uint8_T;
+  }
+
+  writeDigitalPin(10, tmp_0);
+
+  /* End of MATLABSystem: '<Root>/Right LED' */
+
+  /* Update for DiscreteIntegrator: '<Root>/Discrete-Time Integrator' incorporates:
+   *  RelationalOperator: '<S3>/FixPt Relational Operator'
+   *  UnitDelay: '<S3>/Delay Input1'
+   *
+   * Block description for '<S3>/Delay Input1':
+   *
+   *  Store in Global RAM
+   */
+  indicator_controller_DW.DiscreteTimeIntegrator_DSTATE = (uint8_T)((uint16_T)
+    ((int16_T)rtb_Compare > (int16_T)indicator_controller_DW.DelayInput1_DSTATE)
+    + indicator_controller_DW.DiscreteTimeIntegrator_DSTATE);
+
+  /* Update for UnitDelay: '<S3>/Delay Input1'
+   *
+   * Block description for '<S3>/Delay Input1':
+   *
+   *  Store in Global RAM
+   */
+  indicator_controller_DW.DelayInput1_DSTATE = rtb_Compare;
+
+  /* Update for UnitDelay: '<S4>/Delay Input1'
+   *
+   * Block description for '<S4>/Delay Input1':
+   *
+   *  Store in Global RAM
+   */
+  indicator_controller_DW.DelayInput1_DSTATE_b = rtb_Compare_i;
+
+  /* Update for DiscreteIntegrator: '<Root>/Discrete-Time Integrator1' */
+  indicator_controller_DW.DiscreteTimeIntegrator1_DSTATE = (uint8_T)((uint16_T)
+    indicator_controller_DW.DiscreteTimeIntegrator1_DSTATE +
+    rtb_FixPtRelationalOperator_l);
+}
+
+/* Model initialize function */
+void indicator_controller_initialize(void)
+{
+  /* InitializeConditions for UnitDelay: '<Root>/Unit Delay' */
+  indicator_controller_DW.UnitDelay_DSTATE =
+    indicator_controller_P.UnitDelay_InitialCondition;
+
+  /* InitializeConditions for DiscreteIntegrator: '<Root>/Discrete-Time Integrator' */
+  indicator_controller_DW.DiscreteTimeIntegrator_DSTATE =
+    indicator_controller_P.DiscreteTimeIntegrator_IC;
+
+  /* InitializeConditions for UnitDelay: '<S3>/Delay Input1'
+   *
+   * Block description for '<S3>/Delay Input1':
+   *
+   *  Store in Global RAM
+   */
+  indicator_controller_DW.DelayInput1_DSTATE =
+    indicator_controller_P.DetectRisePositive_vinit;
+
+  /* InitializeConditions for UnitDelay: '<S4>/Delay Input1'
+   *
+   * Block description for '<S4>/Delay Input1':
+   *
+   *  Store in Global RAM
+   */
+  indicator_controller_DW.DelayInput1_DSTATE_b =
+    indicator_controller_P.DetectRisePositive1_vinit;
+
+  /* InitializeConditions for UnitDelay: '<Root>/Unit Delay1' */
+  indicator_controller_DW.UnitDelay1_DSTATE =
+    indicator_controller_P.UnitDelay1_InitialCondition;
+
+  /* InitializeConditions for DiscreteIntegrator: '<Root>/Discrete-Time Integrator1' */
+  indicator_controller_DW.DiscreteTimeIntegrator1_DSTATE =
+    indicator_controller_P.DiscreteTimeIntegrator1_IC;
+
+  /* Start for MATLABSystem: '<Root>/Left LED' */
+  indicator_controller_DW.obj_g.matlabCodegenIsDeleted = false;
+  indicator_controller_DW.obj_g.isInitialized = 1L;
+  digitalIOSetup(9, 1);
+  indicator_controller_DW.obj_g.isSetupComplete = true;
+
+  /* Start for MATLABSystem: '<Root>/Left_Button' */
+  indicator_controller_DW.obj_p.matlabCodegenIsDeleted = false;
+  indicator_controller_DW.obj_p.isInitialized = 1L;
+  digitalIOSetup(8, 0);
+  indicator_controller_DW.obj_p.isSetupComplete = true;
+
+  /* Start for MATLABSystem: '<Root>/Right_Button' */
+  indicator_controller_DW.obj_h.matlabCodegenIsDeleted = false;
+  indicator_controller_DW.obj_h.isInitialized = 1L;
+  digitalIOSetup(7, 0);
+  indicator_controller_DW.obj_h.isSetupComplete = true;
+
+  /* Start for MATLABSystem: '<Root>/Right LED' */
+  indicator_controller_DW.obj.matlabCodegenIsDeleted = false;
+  indicator_controller_DW.obj.isInitialized = 1L;
+  digitalIOSetup(10, 1);
+  indicator_controller_DW.obj.isSetupComplete = true;
+}
+
+/* Model terminate function */
+void indicator_controller_terminate(void)
+{
+  /* Terminate for MATLABSystem: '<Root>/Left LED' */
+  if (!indicator_controller_DW.obj_g.matlabCodegenIsDeleted) {
+    indicator_controller_DW.obj_g.matlabCodegenIsDeleted = true;
+  }
+
+  /* End of Terminate for MATLABSystem: '<Root>/Left LED' */
+
+  /* Terminate for MATLABSystem: '<Root>/Left_Button' */
+  if (!indicator_controller_DW.obj_p.matlabCodegenIsDeleted) {
+    indicator_controller_DW.obj_p.matlabCodegenIsDeleted = true;
+  }
+
+  /* End of Terminate for MATLABSystem: '<Root>/Left_Button' */
+
+  /* Terminate for MATLABSystem: '<Root>/Right_Button' */
+  if (!indicator_controller_DW.obj_h.matlabCodegenIsDeleted) {
+    indicator_controller_DW.obj_h.matlabCodegenIsDeleted = true;
+  }
+
+  /* End of Terminate for MATLABSystem: '<Root>/Right_Button' */
+
+  /* Terminate for MATLABSystem: '<Root>/Right LED' */
+  if (!indicator_controller_DW.obj.matlabCodegenIsDeleted) {
+    indicator_controller_DW.obj.matlabCodegenIsDeleted = true;
+  }
+
+  /* End of Terminate for MATLABSystem: '<Root>/Right LED' */
+}
+
+/*
+ * File trailer for generated code.
+ *
+ * [EOF]
+ */
